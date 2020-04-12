@@ -24,13 +24,14 @@ users.post("/register", (req, res) => {
     email: req.body.email,
     username: req.body.username,
     password: req.body.password,
-    passwordAgain: req.body.passwordAgain
+    passwordAgain: req.body.passwordAgain,
+    type: 2,
   };
   // Look for a email in the db that matches the one the user entered
   User.findOne({
-    where: { email: req.body.email }
+    where: { email: req.body.email },
     // do the followoing with the user from the databse
-  }).then(user => {
+  }).then((user) => {
     // if there was no user brought back (hope not its a register)
     if (!user) {
       // hash the password the user entered
@@ -39,12 +40,12 @@ users.post("/register", (req, res) => {
         userData.password = hash;
         // create a user based on the data the user entered
         User.create(userData)
-          .then(user => {
+          .then((user) => {
             // respond with the message that the user has been registered
             res.json({ status: user.username + ": registerd" });
             // Spit out the error
           })
-          .catch(err => {
+          .catch((err) => {
             // error: the user faild to create for some reason
             //        probably something to do with the conection to the databse
             res.send("error: " + err);
@@ -53,7 +54,7 @@ users.post("/register", (req, res) => {
     } else {
       res.json({
         message:
-          "An account with the email " + userData.email + " already exists"
+          "An account with the email " + userData.email + " already exists",
       });
     }
   });
@@ -68,10 +69,10 @@ users.post("/login", (req, res) => {
   // look for an email in the database where the email matches the user input
   User.findOne({
     // the condition the used find the user ( ... WHERE email = *user input email*)
-    where: { email: req.body.email }
+    where: { email: req.body.email },
     // then do this if the user was found
   })
-    .then(user => {
+    .then((user) => {
       // check if there is a user in the user variable
       if (user) {
         // check if the passwords match (while encrypted)
@@ -79,19 +80,20 @@ users.post("/login", (req, res) => {
           if (response) {
             // generate a token for the user
             let token = jwt.sign(user.dataValues, process.env.SECRET_KEY, {
-              expiresIn: 1440
+              expiresIn: 1440,
             });
             // sends the response to the server with the token
             res.send({
               auth: true,
               message: token,
               username: user.username,
-              email: user.email
+              email: user.email,
+              type: user.type,
             });
           } else {
             res.send({
               auth: false,
-              message: "Passwords do not match"
+              message: "Passwords do not match",
             });
           }
         });
@@ -99,16 +101,16 @@ users.post("/login", (req, res) => {
         // the case there is no user
         res.json({
           auth: false,
-          message: "An account with that email does not exist"
+          message: "An account with that email does not exist",
         });
       }
       // if no user was found in the databse
     })
-    .catch(err => {
+    .catch((err) => {
       // spit out the error
       res.json({
         auth: false,
-        error: err
+        error: err,
       });
     });
 });

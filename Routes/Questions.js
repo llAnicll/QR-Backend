@@ -19,9 +19,9 @@ questions.use(cors());
 questions.get("/getQuestion", (req, res) => {
   Question.findAll({
     limit: 5,
-    order: Sequelize.fn("RAND")
+    order: Sequelize.fn("RAND"),
   })
-    .then(q => {
+    .then((q) => {
       if (q) {
         res.json(q);
       } else {
@@ -29,10 +29,34 @@ questions.get("/getQuestion", (req, res) => {
         res.status(400).json({ error: "There are not questions" });
       }
     })
-    .catch(err => {
+    .catch((err) => {
       // spit out the error
       res.status(400).json({ error: err });
     });
+});
+
+/* ********************************************************************************************************************
+ * Route method: /makeQuestion
+ * Rout location: /questions/makeQuestion
+ * Method: POST
+ * Purpose: this rout gets a set number of random questions from the databse
+ * ***************************************************************************************************************** */
+questions.post("/makeQuestion", (req, res) => {
+  const newQuestion = {
+    question: req.body.question,
+    answer: req.body.answer,
+  };
+  Question.findOne({
+    where: { question: req.body.question },
+  }).then((question) => {
+    if (!question) {
+      Question.create(newQuestion);
+    } else {
+      res.json({
+        message: "That Question already exists",
+      });
+    }
+  });
 });
 
 module.exports = questions;

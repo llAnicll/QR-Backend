@@ -14,16 +14,19 @@ module.exports = db.sequelize.define(
     email: {
       type: Sequelize.STRING, // email is of data type STRING
       primaryKey: true, // email is the primary key
-      autoIncrement: false // email does not auto increment
+      autoIncrement: false, // email does not auto increment
     },
     username: {
-      type: Sequelize.STRING // username is of data type STRING
+      type: Sequelize.STRING, // username is of data type STRING
     },
     password: {
-      type: Sequelize.STRING // password is of data type STRING
-    }
+      type: Sequelize.STRING, // password is of data type STRING
+    },
+    type: {
+      type: Sequelize.INTEGER, // type is of data type INTEGER
+    },
   },
   {
-    timestamps: false
+    timestamps: false,
   }
 );
