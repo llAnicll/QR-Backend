@@ -25,7 +25,7 @@ users.post("/register", (req, res) => {
     username: req.body.username,
     password: req.body.password,
     passwordAgain: req.body.passwordAgain,
-    type: 2,
+    type: 1,
   };
   // Look for a email in the db that matches the one the user entered
   User.findOne({
